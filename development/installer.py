@@ -2,6 +2,7 @@
 import argparse
 import os
 import subprocess
+from security import safe_command
 
 
 def cprint(*args, level: int = 1):
@@ -142,7 +143,7 @@ def init_bench_if_not_exist(args):
             "-c",
             init_command,
         ]
-        subprocess.call(command, env=env, cwd=os.getcwd())
+        safe_command.run(subprocess.call, command, env=env, cwd=os.getcwd())
         cprint("Configuring Bench ...", level=2)
         cprint("Set db_host", level=3)
         if args.db_type:
@@ -233,8 +234,7 @@ def create_site_in_bench(args):
         new_site_cmd.append(f"--install-app={app}")
     new_site_cmd.append(args.site_name)
     cprint(f"Creating Site {args.site_name} ...", level=2)
-    subprocess.call(
-        new_site_cmd,
+    safe_command.run(subprocess.call, new_site_cmd,
         cwd=os.getcwd() + "/" + args.bench_name,
     )
 
